@@ -35,7 +35,7 @@ let generateBraveManifest = () => {
     manifest_version: 2,
     version: '1.0',
     background: {
-      scripts: [ 'content/scripts/idleHandler.js', 'content/scripts/sync.js' ]
+      scripts: [ 'content/scripts/idleHandler.js' ]
     },
     content_scripts: [
       {
@@ -132,6 +132,10 @@ let generateBraveManifest = () => {
     ],
     incognito: 'spanning',
     key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAupOLMy5Fd4dCSOtjcApsAQOnuBdTs+OvBVt/3P93noIrf068x0xXkvxbn+fpigcqfNamiJ5CjGyfx9zAIs7zcHwbxjOw0Uih4SllfgtK+svNTeE0r5atMWE0xR489BvsqNuPSxYJUmW28JqhaSZ4SabYrRx114KcU6ko7hkjyPkjQa3P+chStJjIKYgu5tWBiMJp5QVLelKoM+xkY6S7efvJ8AfajxCViLGyDQPDviGr2D0VvIBob0D1ZmAoTvYOWafcNCaqaejPDybFtuLFX3pZBqfyOCyyzGhucyCmfBXJALKbhjRAqN5glNsUmGhhPK87TuGATQfVuZtenMvXMQIDAQAB'
+  }
+
+  if (getSetting(settings.SYNC_ENABLED)) {
+    baseManifest.background.scripts.push('content/scripts/sync.js')
   }
 
   let cspDirectives = {
@@ -368,7 +372,20 @@ module.exports.init = () => {
     extensionActions.extensionDisabled(config.torrentExtensionId)
   }
 
-  let registerComponents = () => {
+  let isSyncDiff = (diff) => {
+    // checks if a diff is related to enabling/disabling brave sync
+    if (!diff || !diff.length) {
+      return false
+    }
+    for (let i = 0; i < diff.length; i++) {
+      if (diff[i].path === '/settings/sync.enabled') {
+        return true
+      }
+    }
+    return false
+  }
+
+  let registerComponents = (diff) => {
     if (getSetting(settings.PDFJS_ENABLED)) {
       registerComponent(config.PDFJSExtensionId)
     } else {
@@ -408,6 +425,14 @@ module.exports.init = () => {
 
     if (appStore.getState().getIn(['widevine', 'enabled'])) {
       registerComponent(config.widevineComponentId)
+    }
+
+    if (isSyncDiff(diff)) {
+      // reload the brave extension
+      console.log('toggling', generateBraveManifest().background.scripts)
+      // TODO: this often causes the tab to crash
+      session.defaultSession.extensions.load(getExtensionsPath('brave'), generateBraveManifest(), 'component')
+      appStore.addChangeListener(registerComponents)
     }
   }
 
