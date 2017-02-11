@@ -37,13 +37,13 @@ class ClipboardButton extends React.Component {
       <span className={css(
         styles.doneLabel,
         this.state.visibleLabel && styles.visible
-      )} onAnimationEnd={this.onAnimationEnd} data-l10n-id='copied'>Copiesd!</span>
+      )} onAnimationEnd={this.onAnimationEnd} data-l10n-id='copied'>Copied!</span>
       <span
         className={this.props.className}
         onClick={this.onClick}>
         {
-          this.props.textContext
-          ? this.props.textContext
+          this.props.textContent
+          ? this.props.textContent
           : ''
         }
       </span>

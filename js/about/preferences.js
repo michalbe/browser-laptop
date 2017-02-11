@@ -13,6 +13,7 @@ const ModalOverlay = require('../components/modalOverlay')
 const {SettingsList, SettingItem, SettingCheckbox, SiteSettingCheckbox} = require('../../app/renderer/components/settings')
 const {SettingTextbox} = require('../../app/renderer/components/textbox')
 const {SettingDropdown} = require('../../app/renderer/components/dropdown')
+const ClipboardButton = require('../../app/renderer/components/clipboardButton')
 const Button = require('../components/button')
 const HelpfulHints = require('../../app/renderer/components/preferences/helpfulHints')
 
@@ -434,7 +435,12 @@ class BitcoinDashboard extends ImmutableComponent {
                     </div>
                 }
                 <div className='walletAddressText'>{this.ledgerData.get('address')}</div>
-                <Button className='primaryButton' l10nId='copyToClipboard' onClick={this.copyToClipboard.bind(this, this.ledgerData.get('address'))} />
+                <ClipboardButton
+                  data-l10n-id='copyToClipboard'
+                  className='browserButton primaryButton'
+                  copyAction={this.copyToClipboard.bind(this, this.ledgerData.get('address'))}
+                  textContent='Copy to clipboard'
+                />
               </div>
             : <div className='settingsPanelDivider'>
               <div data-l10n-id='bitcoinWalletNotAvailable' />
