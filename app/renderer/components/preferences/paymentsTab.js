@@ -17,6 +17,7 @@ moment.locale(navigator.language)
 
 // Components
 const Button = require('../../../../js/components/button')
+const ClipboardButton = require('../clipboardButton')
 const {FormTextbox, RecoveryKeyTextbox} = require('../textbox')
 const {FormDropdown, SettingDropdown} = require('../dropdown')
 const {SettingsList, SettingItem, SettingCheckbox} = require('../settings')
@@ -298,7 +299,12 @@ class PaymentsTab extends ImmutableComponent {
         <span data-l10n-id='ledgerBackupContent' />
         <div className='copyKeyContainer'>
           <div className='copyContainer'>
-            <Button l10nId='copy' className='copyButton whiteButton' onClick={this.copyToClipboard.bind(this, paymentId)} />
+            <ClipboardButton
+              data-l10n-id='copy'
+              className='copyButton whiteButton'
+              copyAction={this.copyToClipboard.bind(this, paymentId)}
+              textContent='Copy'
+            />
           </div>
           <div className='keyContainer'>
             <h3 data-l10n-id='firstKey' />
@@ -307,7 +313,12 @@ class PaymentsTab extends ImmutableComponent {
         </div>
         <div className='copyKeyContainer'>
           <div className='copyContainer'>
-            <Button l10nId='copy' className='copyButton whiteButton' onClick={this.copyToClipboard.bind(this, passphrase)} />
+            <ClipboardButton
+              data-l10n-id='copy'
+              className='copyButton whiteButton'
+              copyAction={this.copyToClipboard.bind(this, passphrase)}
+              textContent='Copy'
+            />
           </div>
           <div className='keyContainer'>
             <h3 data-l10n-id='secondKey' />
